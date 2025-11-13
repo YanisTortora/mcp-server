@@ -6,7 +6,6 @@ import os
 
 app = FastAPI(title="MCP-like Python Tools Server")
 
-# (optionnel) petite clé API pour les calls depuis Azure
 API_KEY = os.getenv("API_KEY", "dev-key")
 
 def check_key(x_api_key: str | None):
@@ -29,6 +28,7 @@ async def call_tool(tool_name: str, request: Request, x_api_key: str | None = He
         raise HTTPException(status_code=404, detail=f"Tool '{tool_name}' not found")
 
     fn = TOOLS[tool_name]
+
     try:
         payload = await request.json()
     except Exception:
@@ -36,8 +36,7 @@ async def call_tool(tool_name: str, request: Request, x_api_key: str | None = He
 
     try:
         res = fn(**payload) if payload else fn()
-        # support async tools
-        if hasattr(res, "__await__"):
+        if hasattr(res, "__await__"):  # au cas où un tool async arrive plus tard
             res = await res
         return JSONResponse({"ok": True, "result": res})
     except TypeError as e:
