@@ -1,14 +1,13 @@
-FROM node:20-bullseye
-RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/apt/lists/*
+FROM node:20-alpine
+
 WORKDIR /app
 
+# Installer seulement les deps Node
 COPY package.json ./
 RUN npm install --production
 
-COPY requirements.txt ./
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-COPY . .
+# Copier le code
+COPY server.mjs tools.mjs ./
 
 EXPOSE 8787
-CMD ["node", "bridge.mjs"]
+CMD ["node", "server.mjs"]
