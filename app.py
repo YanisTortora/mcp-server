@@ -1,6 +1,18 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from tools import TOOLS
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"ok": True}
+
+@app.get("/health")
+def health():
+    return {"ok": True, "tools": []}  # tu compléteras plus tard
+
 
 app = FastAPI(title="MCP-like Python Tools Server")
 
