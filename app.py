@@ -36,3 +36,12 @@ async def call_tool(tool_name: str, request: Request):
         raise HTTPException(status_code=400, detail=f"Bad arguments: {e}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/reports")
+def get_reports():
+    try:
+        with open("reports.json", "r") as f:
+            reports = json.load(f)
+        return {"ok": True, "reports": reports}
+    except FileNotFoundError:
+        return {"ok": True, "reports": []}
