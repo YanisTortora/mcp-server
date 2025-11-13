@@ -71,3 +71,29 @@ TOOLS = {
     "calc": calc_tool,
     "report_issue": report_issue,
 }
+import json, os, time
+
+REPORTS_FILE = "reports.json"
+
+def save_report(data):
+    # créer le fichier si n'existe pas
+    if not os.path.exists(REPORTS_FILE):
+        with open(REPORTS_FILE, "w") as f:
+            json.dump([], f)
+
+    # charger les reports existants
+    with open(REPORTS_FILE, "r") as f:
+        reports = json.load(f)
+
+    # ajouter un timestamp + ID
+    data["timestamp"] = time.time()
+    data["id"] = len(reports) + 1
+
+    reports.append(data)
+
+    # sauvegarder
+    with open(REPORTS_FILE, "w") as f:
+        json.dump(reports, f, indent=2)
+
+    return data
+
