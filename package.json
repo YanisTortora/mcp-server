@@ -4,8 +4,7 @@
   "type": "module",
   "scripts": { "start": "node bridge.mjs" },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.2.0",
-    "body-parser": "^1.20.2",
+    "@modelcontextprotocol/sdk": "latest",
     "express": "^4.19.2"
   }
 }
