@@ -4,11 +4,9 @@ from tools import TOOLS
 
 app = FastAPI(title="MCP-like Python Tools Server")
 
-
 @app.get("/health")
 def health():
     return {"ok": True, "tools": sorted(list(TOOLS.keys()))}
-
 
 @app.post("/tools/{tool_name}")
 async def call_tool(tool_name: str, request: Request):
