@@ -1,5 +1,8 @@
 # tools.py
 import ast, operator as op
+from mcp import tool
+from datetime import datetime
+import uuid
 
 # --- Sécurité : liste d'opérations autorisées ---
 ALLOWED_OPS = {
@@ -39,3 +42,55 @@ def calc_tool(expression: str):
 TOOLS = {
     "calc": calc_tool,
 }
+# Tu as déjà ça pour calc, on ajoute dessous :
+REPORTS: list[dict] = []   # stockage simple pour le hackathon
+
+
+@tool(
+    name="create_report",
+    description="Crée un ticket pour la conciergerie quand tu ne peux pas satisfaire une demande client.",
+    input_schema={
+        "type": "object",
+        "properties": {
+            "hotel_id": {
+                "type": "string",
+                "description": "Identifiant ou nom de l'hôtel concerné."
+            },
+            "customer_message": {
+                "type": "string",
+                "description": "Message original du client."
+            },
+            "reason": {
+                "type": "string",
+                "description": "Pourquoi l'IA ne peut pas répondre (ex: pas d'accès au planning)."
+            },
+            "conversation_id": {
+                "type": "string",
+                "description": "ID de conversation ou contexte si dispo.",
+            }
+        },
+        "required": ["hotel_id", "customer_message", "reason"]
+    },
+    output_schema={
+        "type": "object",
+        "properties": {
+            "report_id": {"type": "string"},
+            "status": {"type": "string"}
+        },
+        "required": ["report_id", "status"]
+    }
+)
+def create_report(hotel_id: str, customer_message: str, reason: str, conversation_id: str | None = None):
+    report_id = str(uuid.uuid4())
+    report = {
+        "id": report_id,
+        "created_at": datetime.utcnow().isoformat() + "Z",
+        "hotel_id": hotel_id,
+        "customer_message": customer_message,
+        "reason": reason,
+        "conversation_id": conversation_id,
+        "status": "open"
+    }
+    REPORTS.append(report)
+    return {"report_id": report_id, "status": "open"}
+
