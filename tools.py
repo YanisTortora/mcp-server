@@ -40,7 +40,7 @@ def calc_tool(expression: str):
 
 # 🔥 C'est ça que ton app.py lit
 TOOLS = {
-    "calc": calc_tool,
+    "calc": calc_tool,"report" : create_report
 }
 # Tu as déjà ça pour calc, on ajoute dessous :
 REPORTS: list[dict] = []   # stockage simple pour le hackathon
