@@ -1,0 +1,1 @@
+TOOLS: dict[str, callable] = {}
