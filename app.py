@@ -1,18 +1,27 @@
+# app.py
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from tools import TOOLS, REPORTS
 
 app = FastAPI(title="MCP-like Python Tools Server")
 
+@app.get("/")
+def root():
+    return {"ok": True}
+
 @app.get("/health")
 def health():
     return {"ok": True, "tools": sorted(list(TOOLS.keys()))}
+
+@app.get("/reports")
+def list_reports():
+    # Endpoint pour le staff : voir tous les reports
+    return {"count": len(REPORTS), "items": REPORTS}
 
 @app.post("/tools/{tool_name}")
 async def call_tool(tool_name: str, request: Request):
     if tool_name not in TOOLS:
         raise HTTPException(status_code=404, detail=f"Tool '{tool_name}' not found")
-
     fn = TOOLS[tool_name]
 
     try:
@@ -22,17 +31,8 @@ async def call_tool(tool_name: str, request: Request):
 
     try:
         res = fn(**payload) if payload else fn()
-        if hasattr(res, "__await__"):
-            res = await res
         return JSONResponse({"ok": True, "result": res})
     except TypeError as e:
         raise HTTPException(status_code=400, detail=f"Bad arguments: {e}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-        from fastapi import FastAPI, HTTPException, Request
-
-@app.get("/reports")
-def list_reports():
-    """Retourne tous les rapports ouverts."""
-    return {"reports": REPORTS}
-
